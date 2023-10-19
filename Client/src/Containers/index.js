@@ -1,4 +1,3 @@
-import Home from "./Home";
-import Login from "./Login";
-
-export { Home, Login };
+export { default as Main } from "./Main";
+export { default as Login } from "./Login";
+export { default as Dashboard } from "./Dashboard";

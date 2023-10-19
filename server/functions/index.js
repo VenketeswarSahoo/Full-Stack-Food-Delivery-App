@@ -1,3 +1,5 @@
+const { onRequest } = require("firebase-functions/v2/https");
+const logger = require("firebase-functions/logger");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 require("dotenv").config();
@@ -30,5 +32,8 @@ app.get("/", (req, res) => {
 
 const userRoute = require("./routes/user");
 app.use("/api/users", userRoute);
+
+const productRoute = require("./routes/products");
+app.use("/api/products/", productRoute);
 
 exports.app = functions.https.onRequest(app);

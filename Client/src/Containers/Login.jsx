@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LoginBg, Logo } from "../assets";
 import LoginInputes from "../Components/LoginInput";
 import { FaEnvelope, FaLock, FcGoogle } from "../assets/icons";
@@ -15,6 +15,8 @@ import {
 } from "firebase/auth";
 import { app } from "../config/firebase.config";
 import { validateUserJWTToken } from "../api";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserDetails } from "../context/actions/userActions";
 
 const Login = () => {
   const [userEmail, setuserEmail] = useState("");
@@ -26,6 +28,18 @@ const Login = () => {
   const provider = new GoogleAuthProvider();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const user = useSelector(state => state.user);
+
+  useEffect(
+    () => {
+      if (user) {
+        navigate("/", { replace: true });
+      }
+    },
+    [user]
+  );
 
   const logInWithGoogle = async () => {
     await signInWithPopup(firebaseAuth, provider).then(userCred => {
@@ -34,6 +48,7 @@ const Login = () => {
           cred.getIdToken().then(token => {
             validateUserJWTToken(token).then(data => {
               console.log(data);
+              dispatch(setUserDetails(data));
             });
           });
         }
@@ -59,6 +74,7 @@ const Login = () => {
               cred.getIdToken().then(token => {
                 validateUserJWTToken(token).then(data => {
                   console.log(data);
+                  dispatch(setUserDetails(data));
                 });
               });
               navigate("/", { replace: true });
@@ -83,6 +99,7 @@ const Login = () => {
             cred.getIdToken().then(token => {
               validateUserJWTToken(token).then(data => {
                 console.log(data);
+                dispatch(setUserDetails(data));
               });
               navigate("/", { replace: true });
             });

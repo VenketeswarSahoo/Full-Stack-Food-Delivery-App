@@ -1,0 +1,41 @@
+import React, { useEffect, useState } from "react";
+import { Header, OrderData } from "../Components";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllOrder } from "../api";
+import { setOrders } from "../context/actions/ordersAction";
+
+const UserOrders = () => {
+  const user = useSelector(state => state.user);
+  const orders = useSelector(state => state.orders);
+  const dispatch = useDispatch();
+
+  const [userOrders, setuserOrders] = useState(null);
+
+  useEffect(() => {
+    if (!orders) {
+      getAllOrder().then(data => {
+        dispatch(setOrders(data));
+        setuserOrders(data.filter((item) => item.userId === user?.data.user_id));
+      });
+    } else {
+      setuserOrders(orders.filter(data => data.userId === user?.data.user_id));
+    }
+  }, [orders]);
+
+  return (
+    <main className="w-screen min-h-screen flex items-center justify-start flex-col bg-primary">
+      <Header />
+      <div className="w-full flex flex-col items-start justify-center mt-40 px-6 md:px-96 gap-12 pb-24" >
+      {userOrders?.length > 0 ? 
+      <>{userOrders.map((item, i) => (
+        <OrderData key={i} index={i} data={item} admin={false} />
+      ))}
+      </> : <>
+      <h1 className="text-[72px] text-headingColor font-bold">No Order</h1>
+      </> }
+      </div>
+    </main>
+  );
+};
+
+export default UserOrders;
